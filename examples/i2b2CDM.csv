@@ -1,0 +1,120 @@
+Table Name,Field Name,Data Type: MSSQL,Data Type: Oracle,Data Type: Postgres,Primary Key,Nullable,Foreign Key,Core,Admin,Future,Ontology,Values,Description,History,Notes
+CONCEPT_DIMENSION,CONCEPT_PATH,varchar(700),varchar2(700),varchar(700),Y,,,Y,,,,,A path that delineates the concept's hierarchy,v1.0,
+CONCEPT_DIMENSION,CONCEPT_CD,varchar(50),varchar2(50),varchar(50),,Y,,Y,,,,,"A code that represents the coded value (e.g. diagnosis, procedure, etc.)",v1.0,This is listed as a PK but is not in SQL
+CONCEPT_DIMENSION,NAME_CHAR,varchar(2000),varchar2(2000),varchar(2000),,Y,,,,,,,The name of the concept,v1.0,This is listed as a PK but is not in SQL
+CONCEPT_DIMENSION,CONCEPT_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML",v1.0,
+CONCEPT_DIMENSION,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.0,
+CONCEPT_DIMENSION,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.0,
+CONCEPT_DIMENSION,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.0,
+CONCEPT_DIMENSION,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.0,
+CONCEPT_DIMENSION,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.3,
+OBSERVATION_FACT,ENCOUNTER_NUM,int,number(38),integer,Y,,,Y,,,,,i2b2 patient visit number,v1.0,
+OBSERVATION_FACT,PATIENT_NUM,int,number(38),integer,Y,,,Y,,,,,i2b2 patient number,v1.0,
+OBSERVATION_FACT,CONCEPT_CD,varchar(50),varchar2(50),varchar(50),Y,,,Y,,,,,"Code for the observation of interest (i.e. diagnoses, procedures, medications, lab tests)",v1.0,
+OBSERVATION_FACT,PROVIDER_ID,varchar(50),varchar2(50),varchar(50),Y,,,Y,,,,,Practitioner or provider id,v1.0,
+OBSERVATION_FACT,START_DATE,datetime,date,timestamp,Y,,,Y,,,,,Starting date-time of the observation,v1.0,
+OBSERVATION_FACT,MODIFIER_CD,varchar(100),varchar2(100),varchar(100),Y,,,Y,,,,,"Code for modifier of interest (i.e. ""ROUTE"", ""DOSE"").
+Note that the value columns are often used to hold the amounts such as ""100"" (mg) for the modifier of DOSE or ""PO"" for the modifier of ROUTE.",v1.0,NOT listed as PK in the docs - fixed
+OBSERVATION_FACT,INSTANCE_NUM,int,number(18),integer,Y,,,Y,,,,,"Encoded instance number that allows more than one modifier to be provided for each CONCEPT_CD.
+Each row will have a different MODIFIER_CD but a similar INSTANCE_NUM.",v1.4,NOT listed as PK in the docs - fixed
+OBSERVATION_FACT,VALTYPE_CD,varchar(50),varchar2(50),varchar(50),,Y,,Y,,,,"N = Numeric
+T = Text (enums / short messages)
+B = Raw Text (notes / reports)",Format of the concept,v1.0,"I took out this, which is not implemented:
+NLP = NLP result text [future use]
+Also the code makes reference to an undocumented:
+M = modifier??"
+OBSERVATION_FACT,TVAL_CHAR,varchar(255),varchar2(255),varchar(255),,Y,,Y,,,,"Used in conjunction with VALTYPE_CD = ""T"" or ""N""
+When the VALTYPE_CD = ""T""
+Stores the text value
+
+When VALTYPE_CD = ""N""
+E = Equals
+NE = Not equal
+L = Less than
+LE = Less than and Equal to
+G = Greater than
+GE = Greater than and Equal to",Stores the text value of the concept,v1.0,
+OBSERVATION_FACT,NVAL_NUM,decimal,"number(18,5)","numeric(18,5)",,Y,,Y,,,,,"Used in conjunction with VALTYPE_CD = ""N"" to store a numerical value",v1.0,
+OBSERVATION_FACT,VALUEFLAG_CD,varchar(50),varchar2(50),varchar(50),,Y,,Y,,,,"Used in conjunction with VALTYPE_CD 
+
+When the VALTYPE_CD = ""N"" or ""T"" it is used to flag certain outlying or abnormal values
+H = High
+L = Low
+A = Abnormal
+* this can be customized",An optional flag for outlier or abnormal values,v1.0,"Future functionality (I took this out of the wiki): 
+When VALTYPE_CD = ""B"" or ""NLP"" it is used to indicate whether or not the data in the blob column is encrypted.
+X = Encrypted text in the blob column [future]"
+OBSERVATION_FACT,QUANTITY_NUM,decimal,"number(18,5)","numeric(18,5)",,Y,,,,?,,,Quantity of the value in the NVAL_NUM column,v1.0,
+OBSERVATION_FACT,UNITS_CD,varchar(50),varchar2(50),varchar(50),,Y,,Y,,,,,"Units of measurement for the value in the NVAL_NUM column. Optional. If unit conversions are turned on, this is used to scale results in the query tool.",v1.0,
+OBSERVATION_FACT,END_DATE,datetime,date,timestamp,,Y,,Y,,,,,The end date-time for the observation,v1.0,
+OBSERVATION_FACT,LOCATION_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,?,,"A location code, such as for a clinic",v1.0,
+OBSERVATION_FACT,OBSERVATION_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML",v1.3 (was a number in v1.0),
+OBSERVATION_FACT,CONFIDENCE_NUM,decimal,"number(18,5)","numeric(18,5)",,Y,,,,Y,,,Assessment of accuracy of data - not used,v1.0,
+OBSERVATION_FACT,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.0,
+OBSERVATION_FACT,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.0,
+OBSERVATION_FACT,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.0,
+OBSERVATION_FACT,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.0,
+OBSERVATION_FACT,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.0,
+OBSERVATION_FACT,TEXT_SEARCH_INDEX,int,n/a,integer,,,,,,,,,Used internally by the database server for text indexing,v1.6,
+PATIENT_DIMENSION,PATIENT_NUM,int,number(38),integer,Y,,,Y,,,,,i2b2 patient number,v1.0,
+PATIENT_DIMENSION,VITAL_STATUS_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,Y,,,"Could be used by an ontology or by the vital status breakdown type, but not used by the core platform.
+Contains a code that represents the vital status of the patient and the precision of the vital status data.
+The code consists of two characters; the first one represents the validity of the DEATH_DATE and the second one is for the BIRTH_DATE.",v1.0,Listed as PK but not in SQL - fixed
+PATIENT_DIMENSION,BIRTH_DATE,datetime,date,timestamp,,Y,,Y,,,Y,,Patient birth date.,v1.0,Listed as PK but not in SQL - fixed
+PATIENT_DIMENSION,DEATH_DATE,datetime,date,timestamp,,Y,,Y,,,Y,,Patient death date.,v1.0,Listed as PK but not in SQL - fixed
+PATIENT_DIMENSION,SEX_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"Code representing patient sex, defined in the ontology.",v1.0,
+PATIENT_DIMENSION,AGE_IN_YEARS_NUM,int,number(38),integer,,Y,,,,,Y,,Patient current age (can be computed by birth_date and current date). Optional - usually ontology-based queries use birth_date.,v1.0,
+PATIENT_DIMENSION,LANGUAGE_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"Code representing patient language, defined in the ontology.",v1.0,
+PATIENT_DIMENSION,RACE_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"The codes from the RACE_CD column are enumerated values that may be grouped together to achieve a desired result. For instance, if there are four codes to represent a race of ""white""; W, WHITE, WHT, and WHITE-HISPANIC then all four codes can be counted directly to determine the number of white-race patients in the database.",v1.0,
+PATIENT_DIMENSION,MARITAL_STATUS_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"Code representing patient marital status, defined in the ontology.",v1.0,
+PATIENT_DIMENSION,RELIGION_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"Code representing patient religion, defined in the ontology.",v1.0,
+PATIENT_DIMENSION,ZIP_CD,varchar(10),varchar2(10),varchar(10),,Y,,,,,Y,,Patient zip code.,v1.0,
+PATIENT_DIMENSION,STATECITYZIP_PATH,varchar(700),varchar2(700),varchar(700),,Y,,,,,Y,,"The codes from the STATECITYZIP_CD are intended to be strings that represent hierarchical information. In the way, the string is queried from left to right in a string comparison to determine which patients are returned by the query. For example, if a code is MA\BOSTON\02114 and all the patient in BOSTON are desired, the string ""MA\BOSTON*"" (where * is a wildcard) would be queried.",v1.0,
+PATIENT_DIMENSION,INCOME_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"Code representing patient income level, defined in the ontology. (Infrequently used.)",v1.6,
+PATIENT_DIMENSION,PATIENT_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML",v1.3 (was a char in v1.0),
+PATIENT_DIMENSION,* (custom columns),,,,,,,,,,Y,,"Starting from version 1.6, this table will support custom columns apart from the required ones. The PDO service will return the custom fields in the <param> tag within the <patient> element.",v1.6,
+PATIENT_DIMENSION,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.0,
+PATIENT_DIMENSION,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.0,
+PATIENT_DIMENSION,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.0,
+PATIENT_DIMENSION,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.0,
+PATIENT_DIMENSION,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.0,
+PROVIDER_DIMENSION,PROVIDER_ID,varchar(50),varchar2(50),varchar(50),Y,,,Y,,,,,Each record in the PROVIDER_DIMENSION table represents a physician or provider at an institution.,v1.0,
+PROVIDER_DIMENSION,PROVIDER_PATH,varchar(700),varchar2(700),varchar(700),Y,,,Y,,,Y,,"The PROVIDER_PATH is the path that describes how the provider fits into the institutional hierarchy. Institution, department, provider name and a code may be included in the path.",v1.0,
+PROVIDER_DIMENSION,NAME_CHAR,varchar(850),varchar2(850),varchar(850),,Y,,,,,,,Provider name,v1.0,
+PROVIDER_DIMENSION,PROVIDER_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML",v1.0,
+PROVIDER_DIMENSION,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.0,
+PROVIDER_DIMENSION,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.0,
+PROVIDER_DIMENSION,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.0,
+PROVIDER_DIMENSION,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.0,
+PROVIDER_DIMENSION,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.0,
+VISIT_DIMENSION,ENCOUNTER_NUM,int,number(38),integer,Y,,,Y,,,,,i2b2 patient visit number,v1.0,
+VISIT_DIMENSION,PATIENT_NUM,int,number(38),integer,Y,,,Y,,,,,i2b2 patient number,v1.0,
+VISIT_DIMENSION,ACTIVE_STATUS_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,Y,,,"Not presently used, but intended to convey the status of an event along with the precision of the available dates. Conceptually it is very similar to the VITAL_STATUS_CD column in the PATIENT_DIMENSION table. The recommended code consists of two characters; the first one represents the validity of the END_DATE and the second one is for the START_DATE.",v1.3,Listed as PK but not in SQL - fixed
+VISIT_DIMENSION,START_DATE,datetime,date,timestamp,,Y,,,,,Y,,Contains the date the event began.,v1.0,Listed as PK but not in SQL - fixed
+VISIT_DIMENSION,END_DATE,datetime,date,timestamp,,Y,,,,,Y,,Contains the date the event ended.,v1.0,Listed as PK but not in SQL - fixed
+VISIT_DIMENSION,INOUT_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"A code representing whether this visit was inpatient, outpatient, emergency, etc. Defined in the ontology.",v1.0,
+VISIT_DIMENSION,LOCATION_CD,varchar(50),varchar2(50),varchar(50),,Y,,,,,Y,,"A location code, such as for a clinic. It need not have the same code as the corresponding code in observation_fact - one can represent, for example, a site and the other can represent a location within a site.",v1.0,
+VISIT_DIMENSION,LOCATION_PATH,varchar(900),varchar2(900),varchar(900),,Y,,,,,Y,,A hierarchical path representing the visit location.,v1.0,
+VISIT_DIMENSION,LENGTH_OF_STAY,int,number(38),integer,,Y,,,,,Y,,A computed length of stay. Usually end_date-start_date is used by ontologies to dynamically compute length of stay.,v1.6,
+VISIT_DIMENSION,VISIT_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML.",v1.3 (char in v1.0),
+VISIT_DIMENSION,* (custom columns),,,,,,,,,,Y,,"Starting from version 1.6, this table will support custom columns apart from the required ones. The custom column in the table follows the same setup rule as the ones in the PATIENT_DIMENSION table. Please refer to the PATIENT_DIMENSION section for the data type mapping information.",v1.6,
+VISIT_DIMENSION,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.0,
+VISIT_DIMENSION,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.0,
+VISIT_DIMENSION,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.0,
+VISIT_DIMENSION,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.0,
+VISIT_DIMENSION,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.0,
+MODIFIER_DIMENSION,MODIFIER_PATH,varchar(700),varchar2(700),varchar(700),Y,,,Y,,,,,A path that delineates the modifier's hierarchy,v1.6,
+MODIFIER_DIMENSION,MODIFIER_CD,varchar(50),varchar2(50),varchar(50),,Y,,Y,,,,,"A code that represents the modifier (e.g., medication dosage)",v1.6,This is listed as a PK but is not in SQL
+MODIFIER_DIMENSION,NAME_CHAR,varchar(2000),varchar2(2000),varchar(2000),,Y,,,,,,,The name of the modifier,v1.6,This is listed as a PK but is not in SQL
+MODIFIER_DIMENSION,MODIFIER_BLOB,varchar(max),clob,text,,Y,,,,,,,"Holds any raw or miscellaneous data that exists, often encrypted PHI or additional information in a parseable format like XML",v1.6,
+MODIFIER_DIMENSION,UPDATE_DATE,datetime,date,timestamp,,Y,,,Y,,,,"Date the row was updated by the source system
+Obtained from the source system",v1.6,
+MODIFIER_DIMENSION,DOWNLOAD_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was downloaded from the source system,v1.6,
+MODIFIER_DIMENSION,IMPORT_DATE,datetime,date,timestamp,,Y,,,Y,,,,Date the data was imported into the CRC,v1.6,
+MODIFIER_DIMENSION,SOURCESYSTEM_CD,varchar(50),varchar2(50),varchar(50),,Y,,,Y,,,,A coded value for the data source system,v1.6,
+MODIFIER_DIMENSION,UPLOAD_ID,int,number(38),integer,,Y,,,Y,,,,A numeric id given to the upload,v1.6,
